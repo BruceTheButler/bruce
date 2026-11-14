@@ -5,6 +5,8 @@ struct VoiceCopy {
     BruceCopy(mode: mode).text(.localized(key))
   }
 
+  var agents: String { text("voice.agents") }
+  var finishOnPhone: String { text("voice.finishOnPhone") }
   var hideCall: String { text("voice.hideCall") }
   var hideCallHint: String { text("voice.hideCallHint") }
   var startHint: String { text("voice.startHint") }

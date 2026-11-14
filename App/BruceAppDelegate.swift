@@ -1,4 +1,5 @@
 #if os(iOS)
+  import CarPlay
   import UIKit
 
   final class BruceAppDelegate: NSObject, UIApplicationDelegate {
@@ -11,7 +12,12 @@
         name: nil,
         sessionRole: connectingSceneSession.role
       )
-      configuration.delegateClass = BruceSceneDelegate.self
+      if connectingSceneSession.role == .carTemplateApplication, #available(iOS 26.4, *) {
+        configuration.sceneClass = CPTemplateApplicationScene.self
+        configuration.delegateClass = BruceCarPlaySceneDelegate.self
+      } else {
+        configuration.delegateClass = BruceSceneDelegate.self
+      }
       return configuration
     }
   }

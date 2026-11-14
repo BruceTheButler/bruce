@@ -122,37 +122,48 @@ func writeIcon(path: String, size: Int, mode: IconMode, platform: IconPlatform) 
   try renderIcon(size: size, mode: mode, platform: platform).write(to: destination)
 }
 
-try writeIcon(
-  path: "App/Assets-iOS.xcassets/AppIcon.appiconset/Bruce-1024.png",
-  size: 1024,
-  mode: .standard,
-  platform: .iOS
-)
-try writeIcon(
-  path: "App/Assets-iOS.xcassets/AppIconFullBruce.appiconset/FullBruce-1024.png",
-  size: 1024,
-  mode: .full,
-  platform: .iOS
-)
-
-for size in [16, 32, 64, 128, 256, 512, 1024] {
+if !CommandLine.arguments.contains("--carplay-only") {
   try writeIcon(
-    path: "App/Assets-macOS.xcassets/AppIcon.appiconset/Bruce-\(size).png",
-    size: size,
+    path: "App/Assets-iOS.xcassets/AppIcon.appiconset/Bruce-1024.png",
+    size: 1024,
     mode: .standard,
+    platform: .iOS
+  )
+  try writeIcon(
+    path: "App/Assets-iOS.xcassets/AppIconFullBruce.appiconset/FullBruce-1024.png",
+    size: 1024,
+    mode: .full,
+    platform: .iOS
+  )
+
+  for size in [16, 32, 64, 128, 256, 512, 1024] {
+    try writeIcon(
+      path: "App/Assets-macOS.xcassets/AppIcon.appiconset/Bruce-\(size).png",
+      size: size,
+      mode: .standard,
+      platform: .macOS
+    )
+  }
+
+  try writeIcon(
+    path: "App/Assets-macOS.xcassets/FullBruceDockIcon.imageset/FullBruce-512.png",
+    size: 512,
+    mode: .full,
+    platform: .macOS
+  )
+  try writeIcon(
+    path: "App/Assets-macOS.xcassets/FullBruceDockIcon.imageset/FullBruce-1024.png",
+    size: 1024,
+    mode: .full,
     platform: .macOS
   )
 }
 
-try writeIcon(
-  path: "App/Assets-macOS.xcassets/FullBruceDockIcon.imageset/FullBruce-512.png",
-  size: 512,
-  mode: .full,
-  platform: .macOS
-)
-try writeIcon(
-  path: "App/Assets-macOS.xcassets/FullBruceDockIcon.imageset/FullBruce-1024.png",
-  size: 1024,
-  mode: .full,
-  platform: .macOS
-)
+for size in [120, 180] {
+  try writeIcon(
+    path: "App/Assets-iOS.xcassets/AppIcon.appiconset/Bruce-CarPlay-\(size).png",
+    size: size, mode: .standard, platform: .iOS)
+  try writeIcon(
+    path: "App/Assets-iOS.xcassets/AppIconFullBruce.appiconset/FullBruce-CarPlay-\(size).png",
+    size: size, mode: .full, platform: .iOS)
+}

@@ -60,6 +60,26 @@ between the device and the voice provider; the gateway owns agent execution and 
 The native Access transfer implementation is adapted from OpenClaw under its MIT licence;
 see `App/Resources/OpenClaw-LICENSE.txt`. WebRTC and Sodium versions are pinned in `project.yml`.
 
+### CarPlay voice
+
+On iOS 26.4 or later, Bruce uses Apple's voice-based conversational CarPlay category.
+The car screen exposes only voice: pick an agent, start a conversation, mute, and end it.
+It shares the phone's active call and in-memory agent roster. Initial sign-in and microphone
+permission must be completed in the iPhone Voice tab. No AI response text or home-control
+panels are displayed in CarPlay.
+
+Device testing requires Apple to approve the **CarPlay Voice-Based Conversation** entitlement
+(`com.apple.developer.carplay-voice-based-conversation`) for your developer account. Request it
+at [Apple CarPlay](https://developer.apple.com/carplay/), enable it on the Bruce development
+and release App IDs, and regenerate the provisioning profiles. Both iOS entitlement files
+already declare the capability. Until those profiles are available, signing this branch for a
+physical iPhone will fail; the code and unit tests can be built without signing.
+
+With an approved development profile, run **Bruce-iOS** on the iPhone, then open CarPlay
+Simulator in Xcode's Device Hub (Xcode 27+) or connect to a compatible car. Test a cold launch
+from CarPlay with the phone app closed, a new call and agent switch, Mute/End, backgrounding,
+and disconnection/phone handoff. The Mac app keeps its sidebar voice UI.
+
 ## Siri and Shortcuts
 
 After connecting Bruce to Home Assistant, its energy and EV charging actions are available in

@@ -9,8 +9,8 @@ struct BruceApp: App {
   #else
     @NSApplicationDelegateAdaptor(BruceAppDelegate.self) private var appDelegate
   #endif
-  @StateObject private var voiceStore = OpenClawVoiceStore()
-  @StateObject private var modeController = BruceModeController()
+  @StateObject private var voiceStore: OpenClawVoiceStore
+  @StateObject private var modeController: BruceModeController
   @StateObject private var setupStore: HomeAssistantSetupStore
   @StateObject private var temperatureStore: HomeAssistantTemperatureStore
   @StateObject private var chargingStore: HomeAssistantEVChargingStore
@@ -22,6 +22,14 @@ struct BruceApp: App {
   #endif
 
   init() {
+    #if os(iOS)
+      let voice = BruceVoiceRuntime.shared
+      _voiceStore = StateObject(wrappedValue: voice.store)
+      _modeController = StateObject(wrappedValue: voice.modeController)
+    #else
+      _voiceStore = StateObject(wrappedValue: OpenClawVoiceStore())
+      _modeController = StateObject(wrappedValue: BruceModeController())
+    #endif
     HomeAssistantMaterialDesignIcon.prepare()
     let dependencies = BruceHomeAssistantDependencies()
     AppDependencyManager.shared.add(dependency: dependencies.siriService)

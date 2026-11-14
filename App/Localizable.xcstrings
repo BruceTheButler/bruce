@@ -7658,6 +7658,40 @@
         }
       }
     },
+    "voice.agents" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Agents"
+          }
+        },
+        "en-AU" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The crew"
+          }
+        }
+      }
+    },
+    "voice.finishOnPhone" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voice setup is incomplete. Finish on iPhone when parked."
+          }
+        },
+        "en-AU" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bruce needs setting up. Sort it on your iPhone when parked."
+          }
+        }
+      }
+    },
     "voice.loading" : {
       "extractionState" : "manual",
       "localizations" : {

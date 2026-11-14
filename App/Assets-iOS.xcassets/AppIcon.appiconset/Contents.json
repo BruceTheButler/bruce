@@ -5,6 +5,18 @@
       "idiom": "universal",
       "platform": "ios",
       "size": "1024x1024"
+    },
+    {
+      "filename": "Bruce-CarPlay-120.png",
+      "idiom": "car",
+      "size": "60x60",
+      "scale": "2x"
+    },
+    {
+      "filename": "Bruce-CarPlay-180.png",
+      "idiom": "car",
+      "size": "60x60",
+      "scale": "3x"
     }
   ],
   "info": {

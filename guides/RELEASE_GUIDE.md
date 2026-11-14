@@ -170,6 +170,20 @@ voice audio, retained conversation content, and account identifiers described in
 `docs/privacy/index.html` and the app privacy manifest. Do not claim that all voice content is
 transient: OpenClaw retains conversations under the gateway operator's retention settings.
 
+## CarPlay voice submission
+
+Before signing or uploading a CarPlay-enabled iOS build, obtain Apple's CarPlay Voice-Based
+Conversation entitlement approval for both development and release App IDs and regenerate the
+profiles with `com.apple.developer.carplay-voice-based-conversation`. Do not substitute audio,
+communication, or navigation entitlements. CarPlay voice requires iOS 26.4 or later; the phone
+app remains available on iOS 26.
+
+Include the voice-control screen and agent selection in review material. Explain that CarPlay
+exposes only the existing OpenClaw voice session, with Start, Mute and End, and shows no AI
+response text or Home Assistant panels. Sign-in and microphone permission are handled on the
+phone. Smoke-test a cold CarPlay-only launch, phone/CarPlay handoff, mute/end from both surfaces,
+backgrounding and disconnection using an approved profile before submission.
+
 ## Promote an RC to final
 
 1. Confirm the latest RC for the current marketing version completed both platform smoke tests.
