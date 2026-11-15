@@ -302,9 +302,9 @@ private final class ControlledGarageDoorDelay: @unchecked Sendable {
   private var continuation: CheckedContinuation<Void, Never>?
 
   func sleep(for _: Duration) async {
-    started.fulfill()
     await withCheckedContinuation { continuation in
       lock.withLock { self.continuation = continuation }
+      started.fulfill()
     }
   }
 

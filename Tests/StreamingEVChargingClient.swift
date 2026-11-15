@@ -36,22 +36,22 @@ final class StreamingEVChargingClient:
   }
 
   func loadEVChargingSnapshot() async throws -> HomeAssistantEVChargingSnapshot {
-    loadStarted.fulfill()
-    return try await withCheckedThrowingContinuation { continuation in
+    try await withCheckedThrowingContinuation { continuation in
       lock.withLock {
         loadContinuation = continuation
       }
+      loadStarted.fulfill()
     }
   }
 
   func setEVChargingMode(
     _ mode: HomeAssistantEVChargingMode
   ) async throws -> HomeAssistantEVChargingMode {
-    setStarted.fulfill()
-    return try await withCheckedThrowingContinuation { continuation in
+    try await withCheckedThrowingContinuation { continuation in
       lock.withLock {
         setContinuation = continuation
       }
+      setStarted.fulfill()
     }
   }
 

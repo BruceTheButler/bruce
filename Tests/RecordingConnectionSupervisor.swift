@@ -30,11 +30,17 @@ final class RecordingConnectionSupervisor:
 
   func requireFreshLiveData() async throws {
     lock.withLock { storedReadinessRequestCount += 1 }
-    readinessStarted.fulfill()
-    if let readinessError { throw readinessError }
-    guard blocksReadiness else { return }
+    if let readinessError {
+      readinessStarted.fulfill()
+      throw readinessError
+    }
+    guard blocksReadiness else {
+      readinessStarted.fulfill()
+      return
+    }
     try await withCheckedThrowingContinuation { continuation in
       lock.withLock { readinessContinuation = continuation }
+      readinessStarted.fulfill()
     }
   }
 
@@ -47,15 +53,18 @@ final class RecordingConnectionSupervisor:
   }
 
   func stop() async {
-    stopStarted.fulfill()
     let shouldBlock = lock.withLock {
       guard blocksStop, !didBlockStop else { return false }
       didBlockStop = true
       return true
     }
-    guard shouldBlock else { return }
+    guard shouldBlock else {
+      stopStarted.fulfill()
+      return
+    }
     await withCheckedContinuation { continuation in
       lock.withLock { stopContinuation = continuation }
+      stopStarted.fulfill()
     }
   }
 

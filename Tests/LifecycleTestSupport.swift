@@ -89,11 +89,11 @@ final class ControlledStateFeedRefresh: @unchecked Sendable {
   private var continuation: CheckedContinuation<Bool, Never>?
 
   func call() async -> Bool {
-    started.fulfill()
-    return await withCheckedContinuation { continuation in
+    await withCheckedContinuation { continuation in
       lock.withLock {
         self.continuation = continuation
       }
+      started.fulfill()
     }
   }
 

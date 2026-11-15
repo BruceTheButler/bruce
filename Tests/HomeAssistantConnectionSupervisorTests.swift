@@ -324,11 +324,11 @@ private final class FirstSnapshotBlockingHomeAssistantLoader:
     if requestIndex > 0 {
       return try response(for: request, value: replacementValue)
     }
-    firstSnapshotStarted.fulfill()
     let response = try await withCheckedThrowingContinuation { continuation in
       lock.withLock {
         firstContinuation = continuation
       }
+      firstSnapshotStarted.fulfill()
     }
     firstSnapshotFinished.fulfill()
     return response

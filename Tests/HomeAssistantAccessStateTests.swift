@@ -150,17 +150,22 @@ private final class AccessStateConnectionCheckGate: @unchecked Sendable {
   let cancelled = XCTestExpectation(description: "Connection check cancelled")
   private let lock = NSLock()
   private var continuation: CheckedContinuation<Void, any Error>?
+  private var cancellationRequested = false
 
   func wait() async throws {
-    started.fulfill()
     try await withTaskCancellationHandler {
       try await withCheckedThrowingContinuation { continuation in
-        lock.withLock {
+        let shouldCancel = lock.withLock {
+          guard !cancellationRequested else { return true }
           self.continuation = continuation
+          return false
         }
+        started.fulfill()
+        if shouldCancel { continuation.resume(throwing: CancellationError()) }
       }
     } onCancel: {
       let continuation = lock.withLock {
+        cancellationRequested = true
         let continuation = self.continuation
         self.continuation = nil
         return continuation

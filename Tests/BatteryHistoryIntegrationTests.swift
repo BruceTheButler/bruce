@@ -28,7 +28,8 @@ final class BatteryHistoryIntegrationTests: XCTestCase {
     let problem = parentProblemCompletion(for: store)
 
     loader.failBattery(0, with: HomeAssistantAPIError.unauthorized)
-    await fulfillment(of: [problem.expectation], timeout: 1)
+    // Simulator scheduling can pause for several seconds under CI load.
+    await fulfillment(of: [problem.expectation], timeout: 10)
 
     XCTAssertTrue(requiresAuthentication)
     XCTAssertFalse(store.batteryHistoryStore.isLoading)

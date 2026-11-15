@@ -105,12 +105,12 @@ final class ScriptedHomeAssistantConnection:
   }
 
   private func sendAuthentication() {
-    authenticationStarted.fulfill()
     if blocksAuthentication {
       lock.withLock { pendingAuthentication = true }
     } else {
       yield(#"{"type":"\#(authenticationResponse)"}"#)
     }
+    authenticationStarted.fulfill()
   }
 
   private func sendSubscription(_ message: [String: Any]) throws {
