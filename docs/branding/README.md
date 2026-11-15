@@ -5,7 +5,9 @@ branding update. `bruce-portrait.png` is the canonical, unmodified 1254 × 1254 
 It contains no household photographs or identifying property details.
 
 - Standard: the portrait, without lettering or extra badges.
-- Full Bruce: the same portrait with a gold edge (`#FFCB18`).
+- Full Bruce: Bruce taking a sip from a glass beer mug, without a border.
+  `bruce-full-beer.png` is the canonical 1254 × 1254 AI-edited alternate source,
+  derived from the standard portrait while retaining his face, hat and illustrated style.
 - iOS: opaque square artwork; the system applies the final mask.
 - macOS: rounded artwork inset by 10%, with transparent outer padding.
 

@@ -48,7 +48,9 @@ standard Bruce.
 Both modes use Bruce’s established illustrated portrait: an approachable Australian country
 butler, not a letter monogram. The canonical source is
 [`docs/branding/bruce-portrait.png`](../docs/branding/bruce-portrait.png).
-Full Bruce adds a bold gold edge so the alternate icon remains distinguishable.
+Full Bruce shows the same bloke drinking a beer from a glass mug, without a border.
+Its canonical source is
+[`docs/branding/bruce-full-beer.png`](../docs/branding/bruce-full-beer.png).
 Do not replace the portrait with a generic British butler, robot or house symbol.
 
 On iOS, the installed app icon follows the selected mode. On macOS, the selected mode changes the

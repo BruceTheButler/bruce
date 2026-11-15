@@ -60,7 +60,8 @@ func renderIcon(size: Int, mode: IconMode, platform: IconPlatform) -> Data {
     iconBounds.fill()
   }
 
-  let portraitURL = repositoryRoot.appendingPathComponent("docs/branding/bruce-portrait.png")
+  let sourceName = isFullBruce ? "bruce-full-beer.png" : "bruce-portrait.png"
+  let portraitURL = repositoryRoot.appendingPathComponent("docs/branding/\(sourceName)")
   guard let portrait = NSImage(contentsOf: portraitURL) else {
     preconditionFailure("Could not load the canonical Bruce portrait.")
   }
@@ -73,14 +74,6 @@ func renderIcon(size: Int, mode: IconMode, platform: IconPlatform) -> Data {
     : NSBezierPath(rect: iconBounds)
   clip.addClip()
   portrait.draw(in: iconBounds, from: .zero, operation: .sourceOver, fraction: 1)
-
-  if isFullBruce {
-    let borderWidth = iconBounds.width * 0.045
-    color(255, 203, 24).setStroke()
-    let border = NSBezierPath(rect: iconBounds.insetBy(dx: borderWidth / 2, dy: borderWidth / 2))
-    border.lineWidth = borderWidth
-    border.stroke()
-  }
 
   NSGraphicsContext.restoreGraphicsState()
 
