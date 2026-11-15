@@ -45,18 +45,21 @@ standard Bruce.
 
 ## App icon
 
-Standard Bruce uses a warm-render field, a tailored dark-pool `B`, and one late-sun full stop.
-
-Full Bruce uses a bottle-green field, an emphatic gold `B`, and a sunburn-red exclamation mark.
-The icon may be more graphic, but its silhouette must remain readable at the smallest supported
-size.
+Both modes use Bruce’s established illustrated portrait: an approachable Australian country
+butler, not a letter monogram. The canonical source is
+[`docs/branding/bruce-portrait.png`](../docs/branding/bruce-portrait.png).
+Full Bruce shows the same bloke drinking a beer from a glass mug, without a border.
+Its canonical source is
+[`docs/branding/bruce-full-beer.png`](../docs/branding/bruce-full-beer.png).
+Do not replace the portrait with a generic British butler, robot or house symbol.
 
 On iOS, the installed app icon follows the selected mode. On macOS, the selected mode changes the
 running app's Dock icon; the Finder icon remains the standard Bruce icon because macOS does not
 provide a supported persistent alternate-icon API.
 
-Do not add a literal house, Wi-Fi arcs, circuit traces, plugs, light bulbs, Australian flags,
-maps or mascots.
+iOS artwork is opaque and square; the operating system applies its icon mask. Mac artwork uses
+a rounded tile with transparent padding. Preserve every existing asset name and catalogue slot.
+See [the artwork notes](../docs/branding/README.md) for regeneration and provenance.
 
 ## Colour
 
