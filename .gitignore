@@ -24,6 +24,7 @@ fastlane/report.xml
 
 # Local configuration
 .env
+.env.signing
 .codex/config.toml
 
 # Agent and worktree state

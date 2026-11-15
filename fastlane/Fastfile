@@ -6,6 +6,14 @@ before_all do
 end
 
 def app_store_api_key
+  key_filepath = ENV["ASC_KEY_FILEPATH"]
+  if key_filepath && !key_filepath.empty?
+    return app_store_connect_api_key(
+      key_id: ENV["ASC_KEY_ID"],
+      issuer_id: ENV["ASC_ISSUER_ID"],
+      key_filepath: key_filepath
+    )
+  end
   app_store_connect_api_key(
     key_id: ENV["ASC_KEY_ID"],
     issuer_id: ENV["ASC_ISSUER_ID"],
@@ -57,7 +65,8 @@ platform :ios do
         "net.symphonious.bruce.energy-widget"
       ],
       api_key: app_store_api_key,
-      force: true
+      force: true,
+      readonly: false
     )
   end
 
@@ -165,7 +174,8 @@ platform :mac do
       ],
       platform: "macos",
       api_key: app_store_api_key,
-      force: true
+      force: true,
+      readonly: false
     )
   end
 

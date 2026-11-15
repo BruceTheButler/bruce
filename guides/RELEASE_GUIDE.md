@@ -26,7 +26,7 @@ The manual setup instructions in `plans/RELEASE_AUTOMATION_PLAN.md` must be comp
 - Widget identifier `net.symphonious.bruce.energy-widget` exists. Both iOS identifiers are
   associated with `group.net.symphonious.bruce`, include the shared Keychain access group, and
   have current App Store distribution profiles. After changing these capabilities, an explicitly
-  approved operator runs `bundle exec fastlane ios force_certificates` before the next release.
+  approved operator runs `just refresh-ios-profiles` before the next release.
 - Both macOS identifiers are associated with `group.net.symphonious.bruce`, include the shared
   Keychain access group, and have current Developer ID profiles. After changing these capabilities,
   an explicitly approved operator runs `bundle exec fastlane mac force_certificates` before the
@@ -170,13 +170,54 @@ voice audio, retained conversation content, and account identifiers described in
 `docs/privacy/index.html` and the app privacy manifest. Do not claim that all voice content is
 transient: OpenClaw retains conversations under the gateway operator's retention settings.
 
+## Local signing configuration
+
+Keep local release credentials in the gitignored `.env.signing` file. Set it up once:
+
+```sh
+cp .env.signing.example .env.signing
+chmod 600 .env.signing
+bundle install
+```
+
+Fill in the file with the existing Bruce credentials: `DEVELOPMENT_TEAM`, `ASC_KEY_ID`,
+`ASC_ISSUER_ID`, `ASC_KEY_FILEPATH`, `MATCH_GIT_URL`, and `MATCH_PASSWORD`.
+`ASC_KEY_FILEPATH` points to the existing `.p8` private key, so it need not be copied or encoded.
+For HTTPS Git authentication, also supply `MATCH_GIT_BASIC_AUTHORIZATION` if your Git credential
+helper does not already provide access. An SSH Match URL can use your existing SSH identity.
+The Git credential needs write access to the dedicated Bruce Match repository for profile refresh.
+
+After enabling a capability in the Apple portal, run:
+
+```sh
+just refresh-ios-profiles
+```
+
+The target sources and exports `.env.signing`, checks all required values before invoking
+Fastlane, and regenerates the iOS App Store profiles in Match. It does not build or publish a
+release. It explicitly enables writable Match operation for this maintenance lane; ordinary CI
+release lanes continue to use read-only Match. The Apple API key must permit provisioning-profile
+creation. Do not broaden the CI key if it is intentionally read-only; use the existing local
+bootstrap key described in `plans/RELEASE_AUTOMATION_PLAN.md`.
+
+To use the same configuration with another local Fastlane lane, run this in the repository root:
+
+```sh
+set -a
+source .env.signing
+set +a
+```
+
+CI continues to use its existing GitHub environment secrets, including base64 `ASC_KEY_CONTENT`.
+Never commit `.env.signing` or copy its contents into logs or chat.
+
 ## CarPlay voice submission
 
 The developer account has Apple’s CarPlay Voice Based Conversation approval. Before signing
 or uploading a CarPlay-enabled iOS build, enable the capability on both the
 `net.symphonious.bruce` and `net.symphonious.bruce.debug` App IDs and regenerate profiles with
 `com.apple.developer.carplay-voice-based-conversation`. An operator with release credentials runs
-`bundle exec fastlane ios force_certificates` after enabling the release App ID capability.
+`just refresh-ios-profiles` after enabling the release App ID capability.
 The widget App IDs do not need CarPlay. Do not substitute audio,
 communication, or navigation entitlements. CarPlay voice requires iOS 26.4 or later; the phone
 app remains available on iOS 26.

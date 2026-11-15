@@ -78,9 +78,10 @@ files already declare it.
 For development, sign in to the developer account in **Xcode → Settings → Accounts**, select
 team **Adrian Sutton**, and build **Bruce-iOS** for the connected iPhone with automatic signing.
 Xcode must obtain a new development profile that includes the capability; an installed profile
-from before approval will not work. For distribution, an operator with the release credentials
-must run `bundle exec fastlane ios force_certificates` to regenerate the profiles stored by Match
-before the next release. Simulator builds and unit tests can run without signing.
+from before approval will not work. For distribution, run `just refresh-ios-profiles` after the
+one-time [local signing setup](guides/RELEASE_GUIDE.md#local-signing-configuration) to regenerate
+the profiles stored by Match before the next release. Simulator builds and unit tests can run
+without signing.
 
 With an approved development profile, run **Bruce-iOS** on the iPhone, then open CarPlay
 Simulator in Xcode's Device Hub (Xcode 27+) or connect to a compatible car. Test a cold launch

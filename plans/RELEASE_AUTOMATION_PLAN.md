@@ -461,6 +461,8 @@ No release tag is created at this checkpoint.
    repository. When `MATCH_GIT_BASIC_AUTHORIZATION` is used, `MATCH_GIT_URL` must use HTTPS rather
    than SSH (for example, `https://github.com/ajsutton/bruce-match.git`).
 7. Do not put these values in `.env`, workflow YAML, release notes, issue comments, or chat.
+   For local maintenance, the gitignored `.env.signing` shell file is supported by
+   `just refresh-ios-profiles`; follow `guides/RELEASE_GUIDE.md` for setup.
 8. Confirm only the RC workflow references `rc-release` and only the final workflow references
    `production-release`.
 9. In GitHub Actions settings, enable **Allow GitHub Actions to create and approve pull requests**.

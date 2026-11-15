@@ -120,6 +120,11 @@ test-ui *FILTERS: generate
 test-release-scripts:
     bash scripts/tests/test-release-common.sh
     python3 scripts/tests/test-automatic-prerelease.py
+    bash scripts/tests/test-refresh-ios-profiles.sh
+
+# Refresh Match profiles after enabling an iOS capability, using local signing configuration.
+refresh-ios-profiles:
+    bash scripts/refresh-ios-profiles.sh
 
 validate-ios: generate
     bundle exec fastlane ios validate
