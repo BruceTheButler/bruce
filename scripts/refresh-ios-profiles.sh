@@ -13,8 +13,11 @@ set -a
 source .env.signing
 set +a
 
+# An empty legacy assignment must not suppress Match’s Keychain lookup or secure prompt.
+if [[ -z "${MATCH_PASSWORD:-}" ]]; then unset MATCH_PASSWORD; fi
+
 missing=()
-for name in DEVELOPMENT_TEAM ASC_KEY_ID ASC_ISSUER_ID MATCH_GIT_URL MATCH_PASSWORD; do
+for name in DEVELOPMENT_TEAM ASC_KEY_ID ASC_ISSUER_ID MATCH_GIT_URL; do
     [[ -n "${!name:-}" ]] || missing+=("$name")
 done
 if [[ -z "${ASC_KEY_FILEPATH:-}" && -z "${ASC_KEY_CONTENT:-}" ]]; then

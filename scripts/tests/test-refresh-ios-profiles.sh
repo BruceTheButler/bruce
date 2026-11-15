@@ -16,7 +16,8 @@ if [[ "$*" == check ]]; then exit "${BUNDLE_CHECK_STATUS:-0}"; fi
 [[ "$ASC_KEY_ID" == test-key ]]
 [[ "$ASC_ISSUER_ID" == test-issuer ]]
 [[ "$MATCH_GIT_URL" == git@example.test:bruce-signing.git ]]
-[[ "$MATCH_PASSWORD" == 'private password with spaces' ]]
+[[ "${MATCH_PASSWORD:-keychain}" == "${EXPECTED_MATCH_PASSWORD:-keychain}" ]]
+if [[ -z "${MATCH_PASSWORD:-}" ]]; then [[ -z "${MATCH_PASSWORD+x}" ]]; fi
 [[ -n "${ASC_KEY_CONTENT:-}${ASC_KEY_FILEPATH:-}" ]]
 echo 'Profile refresh invoked with exported configuration.'
 SH
@@ -38,7 +39,10 @@ expect_failure 'Missing .env.signing'
 echo "ASC_KEY_ID='test-key'" > "$scratch/.env.signing"
 expect_failure 'ASC_ISSUER_ID'
 rg -q 'MATCH_GIT_URL' "$scratch/output"
-rg -q 'MATCH_PASSWORD' "$scratch/output"
+if rg -q 'MATCH_PASSWORD' "$scratch/output"; then
+    echo 'The Match password must not be required in local configuration.' >&2
+    exit 1
+fi
 rg -q 'ASC_KEY_FILEPATH' "$scratch/output"
 
 cat > "$scratch/.env.signing" <<'SH'
@@ -47,10 +51,19 @@ ASC_KEY_ID='test-key'
 ASC_ISSUER_ID='test-issuer'
 ASC_KEY_CONTENT='private-key-content'
 MATCH_GIT_URL='git@example.test:bruce-signing.git'
-MATCH_PASSWORD='private password with spaces'
 SH
 run_refresh
 rg -q 'Profile refresh invoked' "$scratch/output"
+
+# Legacy blank values must still allow Keychain lookup.
+echo "MATCH_PASSWORD=''" >> "$scratch/.env.signing"
+run_refresh
+rg -q 'Profile refresh invoked' "$scratch/output"
+sed -i.bak '/^MATCH_PASSWORD=/d' "$scratch/.env.signing"
+export MATCH_PASSWORD='external-secret' EXPECTED_MATCH_PASSWORD='external-secret'
+run_refresh
+rg -q 'Profile refresh invoked' "$scratch/output"
+unset MATCH_PASSWORD EXPECTED_MATCH_PASSWORD
 
 echo "ASC_KEY_FILEPATH='missing.p8'" >> "$scratch/.env.signing"
 expect_failure 'readable .p8 file'
@@ -62,7 +75,7 @@ rg -q 'Profile refresh invoked' "$scratch/output"
 
 export BUNDLE_CHECK_STATUS=1
 expect_failure 'Run bundle install'
-if rg -q 'private-key-content|private password with spaces' "$scratch/output"; then
+if rg -q 'private-key-content|external-secret' "$scratch/output"; then
     echo 'Signing values appeared in diagnostic output.' >&2
     exit 1
 fi

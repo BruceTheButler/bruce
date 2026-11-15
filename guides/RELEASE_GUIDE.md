@@ -181,7 +181,9 @@ bundle install
 ```
 
 Fill in the file with the existing Bruce credentials: `DEVELOPMENT_TEAM`, `ASC_KEY_ID`,
-`ASC_ISSUER_ID`, `ASC_KEY_FILEPATH`, `MATCH_GIT_URL`, and `MATCH_PASSWORD`.
+`ASC_ISSUER_ID`, `ASC_KEY_FILEPATH`, and `MATCH_GIT_URL`.
+Do not store the Match passphrase in this file. Match retrieves it from macOS Keychain, or
+prompts securely and saves it to Keychain on first use.
 `ASC_KEY_FILEPATH` points to the existing `.p8` private key, so it need not be copied or encoded.
 For HTTPS Git authentication, also supply `MATCH_GIT_BASIC_AUTHORIZATION` if your Git credential
 helper does not already provide access. An SSH Match URL can use your existing SSH identity.
