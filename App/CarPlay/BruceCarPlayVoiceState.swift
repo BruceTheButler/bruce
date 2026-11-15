@@ -1,6 +1,4 @@
 #if os(iOS)
-  import Foundation
-
   /// CarPlay exposes conversation controls and agent selection, never house panels or AI replies.
   @MainActor
   struct BruceCarPlayVoiceState {
@@ -15,16 +13,16 @@
     var copy: VoiceCopy { VoiceCopy(mode: mode) }
 
     var title: String {
-      if needsMicrophoneSetup { return copy.finishOnPhone }
+      if needsMicrophoneSetup { return copy.setupRequired }
       switch phase {
       case .idle: return copy.title
       case .choosing: return agents.isEmpty ? copy.empty : (agent?.displayName ?? copy.chooseAgent)
       case .loading: return copy.loading
-      case .signingIn: return copy.finishOnPhone
+      case .signingIn: return copy.setupRequired
       case .connecting: return copy.connecting
       case .connected: return isMuted ? copy.muted : copy.connected
       case .ending: return copy.ending
-      case .failed: return problem == .microphone ? copy.finishOnPhone : copy.message(problem)
+      case .failed: return problem == .microphone ? copy.setupRequired : copy.message(problem)
       }
     }
 

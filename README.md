@@ -68,12 +68,19 @@ It shares the phone's active call and in-memory agent roster. Initial sign-in an
 permission must be completed in the iPhone Voice tab. No AI response text or home-control
 panels are displayed in CarPlay.
 
-Device testing requires Apple to approve the **CarPlay Voice-Based Conversation** entitlement
-(`com.apple.developer.carplay-voice-based-conversation`) for your developer account. Request it
-at [Apple CarPlay](https://developer.apple.com/carplay/), enable it on the Bruce development
-and release App IDs, and regenerate the provisioning profiles. Both iOS entitlement files
-already declare the capability. Until those profiles are available, signing this branch for a
-physical iPhone will fail; the code and unit tests can be built without signing.
+The developer account has been approved for **CarPlay Voice Based Conversation**
+(`com.apple.developer.carplay-voice-based-conversation`). Enable it separately on the
+`net.symphonious.bruce` and `net.symphonious.bruce.debug` App IDs in
+[Certificates, Identifiers & Profiles](https://developer.apple.com/account/resources/identifiers/list),
+then save each change. The widget App IDs do not need this capability. Both iOS entitlement
+files already declare it.
+
+For development, sign in to the developer account in **Xcode → Settings → Accounts**, select
+team **Adrian Sutton**, and build **Bruce-iOS** for the connected iPhone with automatic signing.
+Xcode must obtain a new development profile that includes the capability; an installed profile
+from before approval will not work. For distribution, an operator with the release credentials
+must run `bundle exec fastlane ios force_certificates` to regenerate the profiles stored by Match
+before the next release. Simulator builds and unit tests can run without signing.
 
 With an approved development profile, run **Bruce-iOS** on the iPhone, then open CarPlay
 Simulator in Xcode's Device Hub (Xcode 27+) or connect to a compatible car. Test a cold launch

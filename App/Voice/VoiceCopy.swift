@@ -6,7 +6,7 @@ struct VoiceCopy {
   }
 
   var agents: String { text("voice.agents") }
-  var finishOnPhone: String { text("voice.finishOnPhone") }
+  var setupRequired: String { text("voice.setupRequired") }
   var hideCall: String { text("voice.hideCall") }
   var hideCallHint: String { text("voice.hideCallHint") }
   var startHint: String { text("voice.startHint") }

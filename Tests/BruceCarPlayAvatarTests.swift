@@ -8,6 +8,23 @@
   @available(iOS 26.4, *)
   @MainActor
   final class BruceCarPlayAvatarTests: XCTestCase {
+    func testAvatarFitsEachTemplateAtTheCarDisplayScale() throws {
+      let source = try XCTUnwrap(
+        UIGraphicsImageRenderer(size: CGSize(width: 600, height: 300)).image { context in
+          UIColor.black.setFill()
+          context.fill(CGRect(x: 0, y: 0, width: 600, height: 300))
+        }.cgImage)
+      for scale: CGFloat in [2, 3] {
+        let avatar = BruceCarPlayAvatar(image: source, displayScale: scale)
+        XCTAssertEqual(avatar.voiceImage.scale, scale)
+        XCTAssertEqual(avatar.voiceImage.size, CGSize(width: 150, height: 75))
+        XCTAssertEqual(avatar.listImage.scale, scale)
+        XCTAssertLessThanOrEqual(avatar.listImage.size.width, CPListItem.maximumImageSize.width)
+        XCTAssertLessThanOrEqual(avatar.listImage.size.height, CPListItem.maximumImageSize.height)
+        XCTAssertEqual(avatar.listImage.size.width / avatar.listImage.size.height, 2)
+      }
+    }
+
     func testLoadedAvatarReachesTheVoiceTemplate() async throws {
       let image = try image()
       let fixture = CarPlayVoiceTestFixture(

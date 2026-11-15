@@ -7675,19 +7675,19 @@
         }
       }
     },
-    "voice.finishOnPhone" : {
+    "voice.setupRequired" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Voice setup is incomplete. Finish on iPhone when parked."
+            "value" : "Voice setup is incomplete."
           }
         },
         "en-AU" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bruce needs setting up. Sort it on your iPhone when parked."
+            "value" : "Bruce isn’t ready to yarn yet."
           }
         }
       }

@@ -5,11 +5,11 @@
   @MainActor
   enum BruceCarPlayVoiceTemplates {
     static func voice(
-      state: BruceCarPlayVoiceState, images: [String: UIImage],
+      state: BruceCarPlayVoiceState, images: [String: BruceCarPlayAvatar],
       action: @escaping (BruceCarPlayVoiceState.Action) -> Void
     ) -> CPVoiceControlTemplate {
       let image =
-        state.agent?.identity?.avatarUrl.flatMap { images[$0] }
+        state.agent?.identity?.avatarUrl.flatMap { images[$0]?.voiceImage }
         ?? UIImage(systemName: "waveform")
       var titles = [state.title]
       if state.phase == .connected || state.phase == .connecting,
@@ -35,12 +35,12 @@
     }
 
     static func agents(
-      state: BruceCarPlayVoiceState, images: [String: UIImage],
+      state: BruceCarPlayVoiceState, images: [String: BruceCarPlayAvatar],
       select: @escaping (OpenClawAgent) -> Void, back: @escaping () -> Void
     ) -> CPListTemplate {
       let items = state.agents.map { agent in
         let image =
-          agent.identity?.avatarUrl.flatMap { images[$0] }
+          agent.identity?.avatarUrl.flatMap { images[$0]?.listImage }
           ?? UIImage(systemName: "person.crop.circle")
         let item = CPListItem(text: agent.displayName, detailText: nil, image: image)
         item.handler = { _, completion in

@@ -26,7 +26,7 @@
       presenter = Presenter()
       let mode = BruceModeController(store: ModeStore(), iconApplier: IconApplier())
       coordinator = BruceCarPlayVoiceCoordinator(
-        store: store, modeController: mode, interfaceController: presenter,
+        store: store, modeController: mode, interfaceController: presenter, displayScale: 2,
         hasMicrophonePermission: microphonePermission, loadAvatar: loadAvatar)
     }
 

@@ -51,7 +51,7 @@
       let voice = fixture.presenter.templates.last as? CPVoiceControlTemplate
       XCTAssertTrue(
         voice?.voiceControlStates.first?.titleVariants?.contains(
-          VoiceCopy(mode: .standard).finishOnPhone) == true)
+          VoiceCopy(mode: .standard).setupRequired) == true)
       permission = true
       await transition(fixture.store, to: .connected) { fixture.coordinator.handle(.start) }
       await transition(fixture.store, to: .choosing) { fixture.coordinator.handle(.end) }

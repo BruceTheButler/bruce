@@ -13,7 +13,8 @@
       let runtime = BruceVoiceRuntime.shared
       let coordinator = BruceCarPlayVoiceCoordinator(
         store: runtime.store, modeController: runtime.modeController,
-        interfaceController: interfaceController)
+        interfaceController: interfaceController,
+        displayScale: interfaceController.carTraitCollection.displayScale)
       self.coordinator = coordinator
       let state = templateApplicationScene.activationState
       coordinator.connect(isVisible: state == .foregroundActive || state == .foregroundInactive)

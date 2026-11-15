@@ -11,12 +11,13 @@
     private let modeController: BruceModeController
     private weak var interfaceController: (any BruceCarPlayPresenting)?
     private let loadAvatar: @MainActor (String) async -> CGImage?
+    private let displayScale: CGFloat
     private let hasMicrophonePermission: () -> Bool
     private var observations: Set<AnyCancellable> = []
     private var modeTask: Task<Void, Never>?
     private var avatarTask: Task<Void, Never>?
     private var avatarURLs: Set<String> = []
-    private var images: [String: UIImage] = [:]
+    private var images: [String: BruceCarPlayAvatar] = [:]
     private let presenterID = UUID()
     private var generation = UUID()
     private var isConnected = false
@@ -30,12 +31,13 @@
 
     init(
       store: OpenClawVoiceStore, modeController: BruceModeController,
-      interfaceController: any BruceCarPlayPresenting,
+      interfaceController: any BruceCarPlayPresenting, displayScale: CGFloat,
       hasMicrophonePermission: @escaping () -> Bool = {
         AVAudioApplication.shared.recordPermission == .granted
       },
       loadAvatar: @escaping @MainActor (String) async -> CGImage? = cachedAvatar
     ) {
+      self.displayScale = displayScale
       self.loadAvatar = loadAvatar
       self.hasMicrophonePermission = hasMicrophonePermission
       self.store = store
@@ -186,7 +188,7 @@
           guard !Task.isCancelled else { return }
           guard let image = await loadAvatar(url) else { continue }
           guard let self, !Task.isCancelled, self.generation == generation else { return }
-          self.images[url] = UIImage(cgImage: image, scale: 3, orientation: .up)
+          self.images[url] = BruceCarPlayAvatar(image: image, displayScale: self.displayScale)
           self.render()
         }
       }

@@ -172,9 +172,12 @@ transient: OpenClaw retains conversations under the gateway operator's retention
 
 ## CarPlay voice submission
 
-Before signing or uploading a CarPlay-enabled iOS build, obtain Apple's CarPlay Voice-Based
-Conversation entitlement approval for both development and release App IDs and regenerate the
-profiles with `com.apple.developer.carplay-voice-based-conversation`. Do not substitute audio,
+The developer account has Apple’s CarPlay Voice Based Conversation approval. Before signing
+or uploading a CarPlay-enabled iOS build, enable the capability on both the
+`net.symphonious.bruce` and `net.symphonious.bruce.debug` App IDs and regenerate profiles with
+`com.apple.developer.carplay-voice-based-conversation`. An operator with release credentials runs
+`bundle exec fastlane ios force_certificates` after enabling the release App ID capability.
+The widget App IDs do not need CarPlay. Do not substitute audio,
 communication, or navigation entitlements. CarPlay voice requires iOS 26.4 or later; the phone
 app remains available on iOS 26.
 
