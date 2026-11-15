@@ -6,7 +6,7 @@
   enum BruceCarPlayVoiceTemplates {
     static func voice(
       state: BruceCarPlayVoiceState, images: [String: BruceCarPlayAvatar],
-      action: @escaping (BruceCarPlayVoiceState.Action) -> Void
+      action: @escaping @MainActor @Sendable (BruceCarPlayVoiceState.Action) -> Void
     ) -> CPVoiceControlTemplate {
       let image =
         state.agent?.identity?.avatarUrl.flatMap { images[$0]?.voiceImage }
@@ -25,43 +25,51 @@
         button(item, state: state, action: action)
       }
       let template = CPVoiceControlTemplate(voiceControlStates: [controlState])
-      if state.showsAgentControls {
-        template.trailingNavigationBarButtons = [
-          barButton(state.copy.agents) { action(.agents) },
-          barButton(state.copy.refreshAgents) { action(.refresh) },
-        ]
-      }
       return template
     }
 
     static func agents(
       state: BruceCarPlayVoiceState, images: [String: BruceCarPlayAvatar],
-      select: @escaping (OpenClawAgent) -> Void, back: @escaping () -> Void
+      select: @escaping @MainActor @Sendable (OpenClawAgent) -> Void,
+      action: @escaping @MainActor @Sendable (BruceCarPlayVoiceState.Action) -> Void
     ) -> CPListTemplate {
-      let items = state.agents.map { agent in
+      let items = (state.phase == .choosing && !state.needsMicrophoneSetup ? state.agents : []).map
+      { agent in
         let image =
           agent.identity?.avatarUrl.flatMap { images[$0]?.listImage }
           ?? UIImage(systemName: "person.crop.circle")
         let item = CPListItem(text: agent.displayName, detailText: nil, image: image)
-        item.handler = { _, completion in
-          select(agent)
+        item.handler = { @Sendable _, completion in
+          Task { @MainActor in
+            select(agent)
+          }
           completion()
         }
         return item
       }
       let template = CPListTemplate(
         title: state.copy.chooseAgent, sections: [CPListSection(items: items)])
-      template.leadingNavigationBarButtons = [barButton(state.copy.done, action: back)]
+      template.emptyViewTitleVariants = [state.title]
+      template.showsSpinnerWhileEmpty = state.phase == .loading
+      if state.phase == .failed || state.needsMicrophoneSetup {
+        template.trailingNavigationBarButtons = [barButton(state.copy.retry) { action(.retry) }]
+      } else if state.phase == .choosing {
+        template.trailingNavigationBarButtons = [
+          barButton(state.copy.refreshAgents) { action(.refresh) }
+        ]
+      }
       return template
     }
 
-    private static func barButton(_ title: String, action: @escaping () -> Void) -> CPBarButton {
-      CPBarButton(title: title) { _ in action() }
+    private static func barButton(
+      _ title: String, action: @escaping @MainActor @Sendable () -> Void
+    ) -> CPBarButton {
+      CPBarButton(title: title, handler: BruceCarPlayActions.barButton(action))
     }
 
     private static func button(
       _ item: BruceCarPlayVoiceState.Action, state: BruceCarPlayVoiceState,
-      action: @escaping (BruceCarPlayVoiceState.Action) -> Void
+      action: @escaping @MainActor @Sendable (BruceCarPlayVoiceState.Action) -> Void
     ) -> CPButton? {
       let title: String
       let symbol: String
@@ -77,10 +85,9 @@
       case .cancel: (title, symbol) = (state.copy.done, "xmark")
       case .refresh: (title, symbol) = (state.copy.refreshAgents, "arrow.clockwise")
       case .retry: (title, symbol) = (state.copy.retry, "arrow.clockwise")
-      case .agents, .back: return nil
       }
       guard let image = UIImage(systemName: symbol) else { return nil }
-      let button = CPButton(image: image) { _ in action(item) }
+      let button = CPButton(image: image, handler: BruceCarPlayActions.button { action(item) })
       button.title = title
       return button
     }

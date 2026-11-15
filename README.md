@@ -63,7 +63,9 @@ see `App/Resources/OpenClaw-LICENSE.txt`. WebRTC and Sodium versions are pinned 
 ### CarPlay voice
 
 On iOS 26.4 or later, Bruce uses Apple's voice-based conversational CarPlay category.
-The car screen exposes only voice: pick an agent, start a conversation, mute, and end it.
+The car screen opens with the agent list. Selecting an agent immediately starts a voice
+conversation; ending it returns to the list. During a conversation, mute and end controls are
+available.
 It shares the phone's active call and in-memory agent roster. Initial sign-in and microphone
 permission must be completed in the iPhone Voice tab. No AI response text or home-control
 panels are displayed in CarPlay.

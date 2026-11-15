@@ -24,7 +24,6 @@
     private var isVisible = false
     private var isPresenting = false
     private var needsRender = false
-    private var showsAgents = false
     private var selectedAgentID: String?
     private var needsMicrophoneSetup = false
     private let logger = Logger(subsystem: "net.symphonious.bruce", category: "CarPlayVoice")
@@ -46,7 +45,18 @@
     }
 
     private static func cachedAvatar(_ value: String) async -> CGImage? {
-      await OpenClawAvatarCache.shared.image(for: value)
+      let cache = OpenClawAvatarCache.shared
+      if value.hasPrefix("data:image/") { return await cache.image(for: value) }
+      guard let url = URL(string: value), url.scheme == "https" else { return nil }
+      do {
+        return try await cache.remoteImage(for: url)
+      } catch {
+        if !Task.isCancelled {
+          Logger(subsystem: "net.symphonious.bruce", category: "CarPlayVoice")
+            .error("CarPlay avatar loading failed: \(String(describing: error), privacy: .private)")
+        }
+        return nil
+      }
     }
 
     func connect(isVisible: Bool = true) {
@@ -102,17 +112,13 @@
       guard isConnected, isVisible else { return }
       switch action {
       case .start: startConversation()
-      case .agents: showsAgents = true
-      case .back: showsAgents = false
       case .refresh: store.refreshAgents()
       case .retry:
-        needsMicrophoneSetup = false
-        store.prepare()
+        if needsMicrophoneSetup { startConversation() } else { store.prepare() }
       case .mute: store.toggleMute()
       case .end: store.end()
       case .cancel:
         needsMicrophoneSetup = false
-        showsAgents = false
         store.end(returnToPicker: false)
       }
       render()
@@ -129,7 +135,6 @@
         return
       }
       needsMicrophoneSetup = false
-      showsAgents = false
       store.start(agent)
     }
 
@@ -144,8 +149,8 @@
       }
       let state = state
       let template: CPTemplate
-      if showsAgents, state.showsAgentControls {
-        let select: (OpenClawAgent) -> Void = { [weak self] agent in
+      if state.showsAgentList {
+        let select: @MainActor @Sendable (OpenClawAgent) -> Void = { [weak self] agent in
           guard let self, self.store.phase == .choosing,
             self.store.agents.contains(where: { $0.id == agent.id })
           else { return }
@@ -154,9 +159,8 @@
         }
         template = BruceCarPlayVoiceTemplates.agents(
           state: state, images: images, select: select,
-          back: { [weak self] in self?.handle(.back) })
+          action: { [weak self] in self?.handle($0) })
       } else {
-        showsAgents = false
         template = BruceCarPlayVoiceTemplates.voice(state: state, images: images) { [weak self] in
           self?.handle($0)
         }

@@ -2,7 +2,7 @@
   /// CarPlay exposes conversation controls and agent selection, never house panels or AI replies.
   @MainActor
   struct BruceCarPlayVoiceState {
-    enum Action { case start, agents, refresh, mute, end, cancel, retry, back }
+    enum Action: Sendable { case start, refresh, mute, end, cancel, retry }
     let phase: OpenClawVoiceStore.Phase
     let agents: [OpenClawAgent]
     let agent: OpenClawAgent?
@@ -39,6 +39,6 @@
       }
     }
 
-    var showsAgentControls: Bool { phase == .choosing && !needsMicrophoneSetup && !agents.isEmpty }
+    var showsAgentList: Bool { ![.connecting, .connected, .ending].contains(phase) }
   }
 #endif

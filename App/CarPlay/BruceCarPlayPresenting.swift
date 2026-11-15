@@ -12,7 +12,7 @@
     func present(
       _ template: CPTemplate, completion: @escaping @MainActor (Bool, (any Error)?) -> Void
     ) {
-      setRootTemplate(template, animated: false) { success, error in
+      setRootTemplate(template, animated: false) { @Sendable success, error in
         Task { @MainActor in completion(success, error) }
       }
     }

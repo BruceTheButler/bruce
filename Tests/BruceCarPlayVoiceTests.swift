@@ -48,12 +48,19 @@
       fixture.coordinator.handle(.start)
       XCTAssertEqual(fixture.store.phase, .choosing)
       XCTAssertTrue(fixture.system.agents.isEmpty)
-      let voice = fixture.presenter.templates.last as? CPVoiceControlTemplate
+      let list = fixture.presenter.templates.last as? CPListTemplate
       XCTAssertTrue(
-        voice?.voiceControlStates.first?.titleVariants?.contains(
+        list?.emptyViewTitleVariants.contains(
           VoiceCopy(mode: .standard).setupRequired) == true)
+      fixture.coordinator.handle(.retry)
+      let denied = fixture.presenter.templates.last as? CPListTemplate
+      XCTAssertEqual(denied?.itemCount, 0)
+      XCTAssertEqual(
+        denied?.trailingNavigationBarButtons.map(\.title), [VoiceCopy(mode: .standard).retry])
+      XCTAssertEqual(denied?.emptyViewTitleVariants, [VoiceCopy(mode: .standard).setupRequired])
+      XCTAssertTrue(fixture.system.agents.isEmpty)
       permission = true
-      await transition(fixture.store, to: .connected) { fixture.coordinator.handle(.start) }
+      await transition(fixture.store, to: .connected) { fixture.coordinator.handle(.retry) }
       await transition(fixture.store, to: .choosing) { fixture.coordinator.handle(.end) }
       await transition(fixture.store, to: .idle) { fixture.coordinator.disconnect() }
     }
@@ -70,7 +77,7 @@
         XCTAssertFalse(state.title.isEmpty)
       }
       let list = BruceCarPlayVoiceTemplates.agents(
-        state: state(phase: .choosing), images: [:], select: { _ in }, back: {})
+        state: state(phase: .choosing), images: [:], select: { _ in }, action: { _ in })
       XCTAssertEqual(list.sections.first?.items.first?.text, agent.displayName)
       XCTAssertEqual(list.sections.first?.items.count, 1)
     }
@@ -83,9 +90,8 @@
       XCTAssertEqual(fixture.presenter.templates.count, 1)
       fixture.presenter.completeNext()
       XCTAssertEqual(fixture.presenter.templates.count, 2)
-      let latest = fixture.presenter.templates.last as? CPVoiceControlTemplate
-      XCTAssertTrue(
-        latest?.voiceControlStates.first?.titleVariants?.contains(agent.displayName) == true)
+      let latest = fixture.presenter.templates.last as? CPListTemplate
+      XCTAssertEqual(latest?.sections.first?.items.first?.text, agent.displayName)
       await transition(fixture.store, to: .idle) {
         fixture.coordinator.disconnect()
         fixture.presenter.completeNext()
@@ -141,11 +147,12 @@
       let state = BruceCarPlayVoiceState(
         phase: .choosing, agents: [], agent: nil, isMuted: false, problem: nil,
         mode: .standard, needsMicrophoneSetup: false)
-      let template = BruceCarPlayVoiceTemplates.voice(state: state, images: [:], action: { _ in })
-      XCTAssertTrue(template.trailingNavigationBarButtons.isEmpty)
-      XCTAssertEqual(
-        template.voiceControlStates.first?.actionButtons.map(\.title), [state.copy.refreshAgents])
-      XCTAssertFalse(state.showsAgentControls)
+      let template = BruceCarPlayVoiceTemplates.agents(
+        state: state, images: [:], select: { _ in }, action: { _ in })
+      XCTAssertEqual(template.emptyViewTitleVariants, [state.copy.empty])
+      XCTAssertEqual(template.trailingNavigationBarButtons.map(\.title), [state.copy.refreshAgents])
+      XCTAssertEqual(template.itemCount, 0)
+      XCTAssertTrue(state.showsAgentList)
     }
 
     private func state(phase: OpenClawVoiceStore.Phase) -> BruceCarPlayVoiceState {

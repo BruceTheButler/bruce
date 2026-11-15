@@ -225,7 +225,8 @@ communication, or navigation entitlements. CarPlay voice requires iOS 26.4 or la
 app remains available on iOS 26.
 
 Include the voice-control screen and agent selection in review material. Explain that CarPlay
-exposes only the existing OpenClaw voice session, with Start, Mute and End, and shows no AI
+opens with agent selection, dials the selected OpenClaw agent immediately, returns to the list
+after End, offers Mute during the conversation, and shows no AI
 response text or Home Assistant panels. Sign-in and microphone permission are handled on the
 phone. Smoke-test a cold CarPlay-only launch, phone/CarPlay handoff, mute/end from both surfaces,
 backgrounding and disconnection using an approved profile before submission.

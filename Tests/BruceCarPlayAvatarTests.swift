@@ -25,7 +25,7 @@
       }
     }
 
-    func testLoadedAvatarReachesTheVoiceTemplate() async throws {
+    func testLoadedAvatarReachesTheAgentList() async throws {
       let image = try image()
       let fixture = CarPlayVoiceTestFixture(
         agents: [agent(avatar: "avatar")], loadAvatar: { _ in image })
@@ -120,7 +120,10 @@
     }
 
     private func photo(_ template: CPTemplate?) -> CGImage? {
-      (template as? CPVoiceControlTemplate)?.voiceControlStates.first?.image?.cgImage
+      if let list = template as? CPListTemplate {
+        return (list.sections.first?.items.first as? CPListItem)?.image?.cgImage
+      }
+      return (template as? CPVoiceControlTemplate)?.voiceControlStates.first?.image?.cgImage
     }
 
     private func transition(

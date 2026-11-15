@@ -12,10 +12,38 @@ actor OpenClawAvatarCache {
     guard let value, value.hasPrefix("data:image/"), value.utf8.count <= 8_000_000 else {
       return nil
     }
-    let key = SHA256.hash(data: Data(value.utf8)).map { String(format: "%02x", $0) }.joined()
-    if let image = images[key] { return image }
     guard let separator = value.range(of: ";base64,"),
-      let data = Data(base64Encoded: String(value[separator.upperBound...])),
+      let data = Data(base64Encoded: String(value[separator.upperBound...]))
+    else { return nil }
+    return image(data: data)
+  }
+
+  /// Remote CarPlay avatars use the same bounded decoder as embedded phone avatars.
+  func remoteImage(for url: URL, session: URLSession = .shared) async throws -> CGImage? {
+    guard url.scheme == "https" else { return nil }
+    let (bytes, response) = try await session.bytes(from: url)
+    defer { bytes.task.cancel() }
+    guard let response = response as? HTTPURLResponse,
+      response.url?.scheme == "https", (200..<300).contains(response.statusCode),
+      response.expectedContentLength <= 8_000_000
+    else { throw OpenClawVoiceError.unavailable }
+    return try await withTaskCancellationHandler {
+      var data = Data()
+      for try await byte in bytes {
+        try Task.checkCancellation()
+        guard data.count < 8_000_000 else { throw OpenClawVoiceError.unavailable }
+        data.append(byte)
+      }
+      return image(data: data)
+    } onCancel: {
+      bytes.task.cancel()
+    }
+  }
+
+  private func image(data: Data) -> CGImage? {
+    let key = SHA256.hash(data: data).map { String(format: "%02x", $0) }.joined()
+    if let image = images[key] { return image }
+    guard
       let source = CGImageSourceCreateWithData(data as CFData, nil),
       let image = CGImageSourceCreateThumbnailAtIndex(
         source, 0,
