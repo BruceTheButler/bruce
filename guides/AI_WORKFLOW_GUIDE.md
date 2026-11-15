@@ -60,3 +60,22 @@ localizable strings in source code. After the final build or test:
 6. Run the required reviewer cycle from `AI_ASSISTANT_GUIDE.md`.
 
 There is no SwiftLint baseline. Do not create one or weaken thresholds to make a change pass.
+
+## Landing changes
+
+Push completed, committed work directly to `main` by default. Create a pull request or use the
+merge queue only when the user explicitly requests that workflow. Local working branches are
+fine; they do not require a pull request.
+
+After completing the checks and reviewer gate above:
+
+1. Fetch `origin/main` and integrate any newer commits. Resolve conflicts and rerun affected
+   checks and reviews when integration changes the implementation.
+2. Push the intended commit with `git push origin HEAD:main`. Use a normal fast-forward push;
+   if the remote has advanced, fetch and integrate again. Never force-push `main`.
+3. Verify that remote `main` contains the intended commit and monitor its CI. Fix failures before
+   reporting the landing as complete.
+
+Every push to `main` also triggers the automatic RC release workflow described in
+`RELEASE_GUIDE.md`. Report any release failure separately from the source landing. Final release
+tagging continues to follow the release guide's authorization and verification gates.

@@ -38,5 +38,8 @@ changes that require review before they are committed.
 ## Task completion
 
 For every implementation task, run the required formatting, builds, tests, and reviewer cycle,
-then commit all intended changes before reporting completion. Do not leave a completed task as an
-uncommitted working-tree diff unless the user explicitly asks for that.
+then commit all intended changes and push directly to `main` before reporting completion, unless
+the user explicitly requests local-only work or another destination. Do not create pull requests
+or use the merge queue unless the user explicitly asks for that workflow. Follow
+`guides/AI_WORKFLOW_GUIDE.md` for synchronizing and verifying the push. Do not leave a completed
+task as an uncommitted working-tree diff unless the user explicitly asks for that.

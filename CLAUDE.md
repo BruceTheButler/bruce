@@ -10,5 +10,7 @@ Claude review agents live in `.claude/agents/`. Their findings follow
 generated project directly.
 
 For every implementation task, run the required formatting, builds, tests, and reviewer cycle,
-then commit all intended changes before reporting completion. Do not leave a completed task as an
-uncommitted working-tree diff unless the user explicitly asks for that.
+then commit all intended changes and push directly to `main` before reporting completion, unless
+the user explicitly requests local-only work or another destination. Create pull requests or use
+the merge queue only when explicitly requested. Follow `guides/AI_WORKFLOW_GUIDE.md`. Do not leave
+a completed task as an uncommitted working-tree diff unless the user explicitly asks for that.

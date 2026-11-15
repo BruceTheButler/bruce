@@ -4,6 +4,12 @@
 
 Plans and design notes live in `plans/`. Completed plans move to `plans/completed/`.
 
+## Delivery
+
+Land implementation work by pushing directly to `main` after the required checks and reviewer
+cycle. Follow `AI_WORKFLOW_GUIDE.md`; pull requests and the merge queue are used only when the
+user explicitly requests them.
+
 ## TODOs
 
 `TODO` and `FIXME` comments must reference an open GitHub issue:

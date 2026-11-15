@@ -99,7 +99,7 @@ creates a fresh RC number; existing tags and assets remain immutable.
    It requires clean local `main`, exact synchronization with `origin/main`, authenticated `gh`,
    and successful CI for the pinned SHA. Do not fetch or pull between preflight and tag creation.
 
-2. Inspect all intended changes since the prior release or RC. Confirm every intended PR is
+2. Inspect all intended changes since the prior release or RC. Confirm every intended change is
    present before continuing.
 
 3. Run:
