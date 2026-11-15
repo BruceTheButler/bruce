@@ -60,46 +60,26 @@ func renderIcon(size: Int, mode: IconMode, platform: IconPlatform) -> Data {
     iconBounds.fill()
   }
 
-  let paragraph = NSMutableParagraphStyle()
-  paragraph.alignment = .center
-  let fontName = isFullBruce ? "HelveticaNeue-CondensedBlack" : "Georgia-Bold"
-  let fontSize = iconBounds.width * 0.68
-  let font = NSFont(name: fontName, size: fontSize) ?? .boldSystemFont(ofSize: fontSize)
-  let attributes: [NSAttributedString.Key: Any] = [
-    .font: font,
-    .foregroundColor: isFullBruce ? color(255, 203, 24) : color(23, 62, 59),
-    .paragraphStyle: paragraph,
-  ]
-  let letterBounds = NSRect(
-    x: iconBounds.minX + iconBounds.width * 0.08,
-    y: iconBounds.minY + iconBounds.height * 0.12,
-    width: iconBounds.width * 0.76,
-    height: iconBounds.height * 0.76
-  )
-  NSAttributedString(string: "B", attributes: attributes).draw(in: letterBounds)
-
-  let punctuationColor = isFullBruce ? color(232, 70, 50) : color(215, 101, 72)
-  punctuationColor.setFill()
-  if isFullBruce {
-    let punctuationAttributes: [NSAttributedString.Key: Any] = [
-      .font: NSFont.boldSystemFont(ofSize: iconBounds.width * 0.27),
-      .foregroundColor: punctuationColor,
-    ]
-    NSAttributedString(string: "!", attributes: punctuationAttributes).draw(
-      at: NSPoint(
-        x: iconBounds.minX + iconBounds.width * 0.72,
-        y: iconBounds.minY + iconBounds.height * 0.17
-      )
+  let portraitURL = repositoryRoot.appendingPathComponent("docs/branding/bruce-portrait.png")
+  guard let portrait = NSImage(contentsOf: portraitURL) else {
+    preconditionFailure("Could not load the canonical Bruce portrait.")
+  }
+  let clip = platform == .macOS
+    ? NSBezierPath(
+      roundedRect: iconBounds,
+      xRadius: iconBounds.width * 0.22,
+      yRadius: iconBounds.height * 0.22
     )
-  } else {
-    NSBezierPath(
-      ovalIn: NSRect(
-        x: iconBounds.minX + iconBounds.width * 0.73,
-        y: iconBounds.minY + iconBounds.height * 0.22,
-        width: iconBounds.width * 0.075,
-        height: iconBounds.height * 0.075
-      )
-    ).fill()
+    : NSBezierPath(rect: iconBounds)
+  clip.addClip()
+  portrait.draw(in: iconBounds, from: .zero, operation: .sourceOver, fraction: 1)
+
+  if isFullBruce {
+    let borderWidth = iconBounds.width * 0.045
+    color(255, 203, 24).setStroke()
+    let border = NSBezierPath(rect: iconBounds.insetBy(dx: borderWidth / 2, dy: borderWidth / 2))
+    border.lineWidth = borderWidth
+    border.stroke()
   }
 
   NSGraphicsContext.restoreGraphicsState()
